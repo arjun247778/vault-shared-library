@@ -8,7 +8,7 @@ def config = [
     ACTION_MESSAGE      : 'Vault Deployment Started',
     KEEP_APPROVAL_STAGE : true,
 
-    REPO_URL            : 'https://github.com/your-repo.git'
+    REPO_URL            : 'https://github.com/arjun247778/vault-shared-library.git'
 ]
 
 vaultDeploy(config)

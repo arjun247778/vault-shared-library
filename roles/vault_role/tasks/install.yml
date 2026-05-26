@@ -1,0 +1,41 @@
+---
+
+- name: Install unzip
+  package:
+    name: unzip
+    state: present
+
+- name: Create Vault group
+  group:
+    name: "{{ vault_group }}"
+    state: present
+
+- name: Create Vault user
+  user:
+    name: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    shell: /sbin/nologin
+    system: yes
+    create_home: no
+
+- name: Download Vault
+  get_url:
+    url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_linux_amd64.zip"
+    dest: "/tmp/vault_{{ vault_version }}.zip"
+
+- name: Extract Vault
+  unarchive:
+    src: "/tmp/vault_{{ vault_version }}.zip"
+    dest: /usr/local/bin/
+    remote_src: yes
+    creates: /usr/local/bin/vault
+    mode: '0755'
+
+- name: Verify Vault Installation
+  command: vault --version
+  register: vault_version_output
+  changed_when: false
+
+- name: Show Vault Version
+  debug:
+    msg: "{{ vault_version_output.stdout }}"

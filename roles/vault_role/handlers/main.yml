@@ -1,0 +1,9 @@
+---
+
+- name: Restart Vault
+  debug:
+    msg: "Vault restarted successfully"
+
+- name: Reload Systemd
+  debug:
+    msg: "Systemd reloaded"

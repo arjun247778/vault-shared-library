@@ -1,0 +1,19 @@
+---
+
+- name: Create Vault config directory
+  file:
+    path: "{{ vault_config_dir }}"
+    state: directory
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: '0755'
+
+- name: Deploy Vault config
+  template:
+    src: vault.hcl.j2
+    dest: "{{ vault_config_dir }}/vault.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: '0644'
+  notify:
+    - Restart Vault

@@ -1,14 +1,15 @@
-@Library('vault-lib') _
+@Library('vault-shared-library') _
 
-def config = [
+def props = readProperties file: 'resources/config.properties'
 
-    SLACK_CHANNEL_NAME  : 'build-status',
-    ENVIRONMENT         : 'prod',
-    CODE_BASE_PATH      : 'env/prod',
-    ACTION_MESSAGE      : 'Vault Deployment Started',
-    KEEP_APPROVAL_STAGE : true,
+vaultPipeline(
 
-    REPO_URL            : 'https://github.com/arjun247778/vault-shared-library.git'
-]
-
-vaultDeploy(config)
+    SLACK_CHANNEL_NAME  : props.SLACK_CHANNEL_NAME,
+    ENVIRONMENT         : props.ENVIRONMENT,
+    CODE_BASE_PATH      : props.CODE_BASE_PATH,
+    ACTION_MESSAGE      : props.ACTION_MESSAGE,
+    KEEP_APPROVAL_STAGE : props.KEEP_APPROVAL_STAGE,
+    PLAYBOOK            : props.PLAYBOOK,
+    INVENTORY           : props.INVENTORY,
+    GIT_REPO            : props.GIT_REPO
+)

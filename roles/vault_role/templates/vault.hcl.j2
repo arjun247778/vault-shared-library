@@ -1,0 +1,17 @@
+# Managed by Ansible - Changes will be overwritten
+
+ui = {{ vault_ui | lower }}
+
+storage "file" {
+  path = "{{ vault_data_dir }}"
+}
+
+listener "tcp" {
+  address         = "{{ vault_listener_address }}"
+  cluster_address = "0.0.0.0:{{ vault_cluster_port }}"
+  tls_disable     = 1
+}
+
+api_addr = "http://127.0.0.1:{{ vault_port }}"
+
+cluster_addr = "http://127.0.0.1:{{ vault_cluster_port }}"

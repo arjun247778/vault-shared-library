@@ -1,0 +1,8 @@
+- name: Load OS specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install Vault
+  include_tasks: install.yml
+
+- name: Configure Vault
+  include_tasks: config.yml

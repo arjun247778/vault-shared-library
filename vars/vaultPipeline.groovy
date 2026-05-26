@@ -4,18 +4,6 @@ def call(Map config = [:]) {
 
         agent any
 
-        environment {
-
-            SLACK_CHANNEL_NAME  = config.SLACK_CHANNEL_NAME
-            ENVIRONMENT         = config.ENVIRONMENT
-            CODE_BASE_PATH      = config.CODE_BASE_PATH
-            ACTION_MESSAGE      = config.ACTION_MESSAGE
-            KEEP_APPROVAL_STAGE = config.KEEP_APPROVAL_STAGE
-            PLAYBOOK            = config.PLAYBOOK
-            INVENTORY           = config.INVENTORY
-            GIT_REPO            = config.GIT_REPO
-        }
-
         stages {
 
             stage('Clone') {
@@ -24,7 +12,7 @@ def call(Map config = [:]) {
 
                     echo "Cloning Repository"
 
-                    git "${GIT_REPO}"
+                    git "${config.GIT_REPO}"
                 }
             }
 
@@ -32,7 +20,7 @@ def call(Map config = [:]) {
 
                 when {
                     expression {
-                        return KEEP_APPROVAL_STAGE == "true"
+                        return config.KEEP_APPROVAL_STAGE == "true"
                     }
                 }
 
@@ -47,7 +35,7 @@ def call(Map config = [:]) {
                 steps {
 
                     sh """
-                        ansible-playbook -i ${INVENTORY} ${PLAYBOOK}
+                        ansible-playbook -i ${config.INVENTORY} ${config.PLAYBOOK}
                     """
                 }
             }
@@ -58,16 +46,16 @@ def call(Map config = [:]) {
             success {
 
                 slackSend(
-                    channel: "${SLACK_CHANNEL_NAME}",
-                    message: "SUCCESS : ${ACTION_MESSAGE}"
+                    channel: "${config.SLACK_CHANNEL_NAME}",
+                    message: "SUCCESS : ${config.ACTION_MESSAGE}"
                 )
             }
 
             failure {
 
                 slackSend(
-                    channel: "${SLACK_CHANNEL_NAME}",
-                    message: "FAILED : ${ACTION_MESSAGE}"
+                    channel: "${config.SLACK_CHANNEL_NAME}",
+                    message: "FAILED : ${config.ACTION_MESSAGE}"
                 )
             }
         }

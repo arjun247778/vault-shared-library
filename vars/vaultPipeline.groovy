@@ -1,11 +1,6 @@
 def call(props) {
 
-    stage('Clone') {
-
-        echo "Cloning Repository"
-
-        git "${props.GIT_REPO}"
-    }
+    
 
     stage('User Approval') {
 

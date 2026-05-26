@@ -1,63 +1,32 @@
-def call(Map config = [:]) {
+def call(props) {
 
-    pipeline {
+    stage('Clone') {
 
-        agent any
+        echo "Cloning Repository"
 
-        stages {
+        git "${props.GIT_REPO}"
+    }
 
-            stage('Clone') {
+    stage('User Approval') {
 
-                steps {
+        if (props.KEEP_APPROVAL_STAGE == "true") {
 
-                    echo "Cloning Repository"
-
-                    git "${config.GIT_REPO}"
-                }
-            }
-
-            stage('User Approval') {
-
-                when {
-                    expression {
-                        return config.KEEP_APPROVAL_STAGE == "true"
-                    }
-                }
-
-                steps {
-
-                    input message: "Approve Vault Deployment?"
-                }
-            }
-
-            stage('Playbook Execution') {
-
-                steps {
-
-                    sh """
-                        ansible-playbook -i ${config.INVENTORY} ${config.PLAYBOOK}
-                    """
-                }
-            }
+            input message: "Approve Vault Deployment?"
         }
+    }
 
-        post {
+    stage('Playbook Execution') {
 
-            success {
+        sh """
+            ansible-playbook -i ${props.INVENTORY} ${props.PLAYBOOK}
+        """
+    }
 
-                slackSend(
-                    channel: "${config.SLACK_CHANNEL_NAME}",
-                    message: "SUCCESS : ${config.ACTION_MESSAGE}"
-                )
-            }
+    stage('Notification') {
 
-            failure {
-
-                slackSend(
-                    channel: "${config.SLACK_CHANNEL_NAME}",
-                    message: "FAILED : ${config.ACTION_MESSAGE}"
-                )
-            }
-        }
+        slackSend(
+            channel: "${props.SLACK_CHANNEL_NAME}",
+            message: "SUCCESS : ${props.ACTION_MESSAGE}"
+        )
     }
 }

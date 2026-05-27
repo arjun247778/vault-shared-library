@@ -1,7 +1,6 @@
 ---
-
 - hosts: linux
-  become: false
+  become: true
 
   roles:
     - vault_role
